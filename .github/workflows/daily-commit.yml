@@ -6,7 +6,7 @@ on:
   workflow_dispatch:
 
 permissions:
-  contents: write  # Required for private repos to push changes
+  contents: write  # Required for private repo push
 
 jobs:
   update-trending:
@@ -18,13 +18,41 @@ jobs:
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Fetch top 20 trending repos
+      - name: Install Python dependencies
         run: |
-          echo "# Top 20 GitHub Trending Repos — $(date '+%Y-%m-%d')" > trending.md
-          echo "" >> trending.md
-          curl -s "https://ghapi.huchen.dev/repositories?since=daily" \
-            | jq -r '.[0:20] | to_entries[] | "## \(.value.author)/\(.value.name)\nStars Today: \(.value.stars)\nDescription: \(.value.description // "N/A")\nURL: \(.value.url)\n"' \
-            >> trending.md
+          python3 -m pip install --upgrade pip
+          pip install requests beautifulsoup4
+
+      - name: Scrape GitHub Trending and update file
+        run: |
+          python3 - << 'PYCODE'
+          import requests
+          from bs4 import BeautifulSoup
+          from datetime import datetime
+
+          url = "https://github.com/trending"
+          headers = {"User-Agent": "Mozilla/5.0"}
+          r = requests.get(url, headers=headers)
+          soup = BeautifulSoup(r.text, "html.parser")
+
+          repos = soup.find_all("article", class_="Box-row")[:20]
+
+          md_content = f"# Top 20 GitHub Trending Repos — {datetime.utcnow().strftime('%Y-%m-%d')}\n\n"
+          for repo in repos:
+              title = repo.h2.get_text(strip=True).replace(" / ", "/")
+              link = "https://github.com/" + title
+              desc_tag = repo.find("p", class_="col-9")
+              desc = desc_tag.get_text(strip=True) if desc_tag else "No description"
+              stars_tag = repo.find("span", class_="d-inline-block float-sm-right")
+              stars_today = stars_tag.get_text(strip=True) if stars_tag else "0"
+              md_content += f"## {title}\n"
+              md_content += f"Stars Today: {stars_today}\n"
+              md_content += f"Description: {desc}\n"
+              md_content += f"URL: {link}\n\n"
+
+          with open("trending.md", "w", encoding="utf-8") as f:
+              f.write(md_content)
+          PYCODE
 
       - name: Commit and push updates
         run: |
