@@ -1,0 +1,28 @@
+name: Daily Commit
+
+on:
+  schedule:
+    - cron: '17 7 * * *'  # Runs daily at 07:17 UTC (adjust as needed)
+  workflow_dispatch:       # Allow manual trigger
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Update daily log
+        run: |
+          DATE=$(date '+%Y-%m-%d %H:%M:%S')
+          echo "Log entry for $DATE" >> daily.md
+          echo "Today's thoughts: Keep coding and stay curious!" >> daily.md
+          echo "" >> daily.md
+
+      - name: Commit and push changes
+        run: |
+          git config user.name "Ghulam Mujtaba"
+          git config user.email "gmujtaba@ieee.org"
+          git add daily.md
+          git commit -m "docs: update daily log ($DATE)"
+          git push
