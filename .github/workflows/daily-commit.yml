@@ -30,25 +30,25 @@ jobs:
           from bs4 import BeautifulSoup
           from datetime import datetime
 
-          url = "https://github.com/trending"
+          url = "https://github.com/trending/python?since=daily"
           headers = {"User-Agent": "Mozilla/5.0"}
           r = requests.get(url, headers=headers)
           soup = BeautifulSoup(r.text, "html.parser")
 
           repos = soup.find_all("article", class_="Box-row")[:20]
 
-          md_content = f"# Top 20 GitHub Trending Repos — {datetime.utcnow().strftime('%Y-%m-%d')}\n\n"
-          for repo in repos:
+          md_content = f"# Top 20 GitHub Trending Python Repos — {datetime.utcnow().strftime('%Y-%m-%d')}\n\n"
+          md_content += "| Rank | Repository | Stars Today | Description |\n"
+          md_content += "|------|------------|-------------|-------------|\n"
+
+          for idx, repo in enumerate(repos, start=1):
               title = repo.h2.get_text(strip=True).replace(" / ", "/")
-              link = "https://github.com/" + title
+              link = f"https://github.com/{title}"
               desc_tag = repo.find("p", class_="col-9")
-              desc = desc_tag.get_text(strip=True) if desc_tag else "No description"
+              desc = desc_tag.get_text(strip=True).replace("|", "\\|") if desc_tag else "No description"
               stars_tag = repo.find("span", class_="d-inline-block float-sm-right")
-              stars_today = stars_tag.get_text(strip=True) if stars_tag else "0"
-              md_content += f"## {title}\n"
-              md_content += f"Stars Today: {stars_today}\n"
-              md_content += f"Description: {desc}\n"
-              md_content += f"URL: {link}\n\n"
+              stars_today = stars_tag.get_text(strip=True).replace("stars today", "").strip() if stars_tag else "0"
+              md_content += f"| {idx} | [{title}]({link}) | {stars_today} | {desc} |\n"
 
           with open("trending.md", "w", encoding="utf-8") as f:
               f.write(md_content)
