@@ -1,35 +1,30 @@
-name: Daily Commit
+name: Daily Trending Update
 
 on:
   schedule:
-    - cron: '17 7 * * *' # Daily at 07:17 UTC
-  workflow_dispatch:       # Still allow manual runs
+    - cron: '0 7 * * *'  # Runs daily at 07:00 UTC
+  workflow_dispatch:       # Allows manual run from GitHub UI
 
 jobs:
-  update-log:
+  update-trending:
     runs-on: ubuntu-latest
+
     steps:
       - name: Checkout repo
         uses: actions/checkout@v4
 
-      - name: Fetch random programming quote
+      - name: Fetch top 20 trending repos
         run: |
-          QUOTE=$(curl -s https://programming-quotes-api.herokuapp.com/quotes/random | jq -r '.en + " — " + .author')
-          echo "QUOTE=$QUOTE" >> $GITHUB_ENV
+          echo "# Top 20 GitHub Trending Repos — $(date '+%Y-%m-%d')" > trending.md
+          echo "" >> trending.md
+          curl -s "https://ghapi.huchen.dev/repositories?since=daily" \
+            | jq -r '.[0:20] | to_entries[] | "## \(.value.author)/\(.value.name)\nStars Today: \(.value.stars)\nDescription: \(.value.description // "N/A")\nURL: \(.value.url)\n"' \
+            >> trending.md
 
-      - name: Update daily log
-        run: |
-          DATE=$(date '+%Y-%m-%d %H:%M:%S')
-          {
-            echo "### $DATE"
-            echo "$QUOTE"
-            echo ""
-          } >> daily.md
-
-      - name: Commit and push changes
+      - name: Commit and push updates
         run: |
           git config user.name "Ghulam Mujtaba"
           git config user.email "gmujtaba@ieee.org"
-          git add daily.md
-          git commit -m "docs: daily log update - $DATE"
+          git add trending.md
+          git commit -m "feat: update trending repos — $(date '+%Y-%m-%d')" || echo "No changes to commit"
           git push
