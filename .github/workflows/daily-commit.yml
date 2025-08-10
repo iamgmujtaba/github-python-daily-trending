@@ -45,7 +45,7 @@ jobs:
           md_content += "|------|------------|-------------|-------------|\n"
 
           for idx, repo in enumerate(repos, start=1):
-              title = repo.h2.get_text(strip=True).replace(" / ", "/")
+              title = repo.h2.get_text(strip=True).replace(" /", "/")
               link = f"https://github.com/{title}"
               desc_tag = repo.find("p", class_="col-9")
               desc = desc_tag.get_text(strip=True).replace("|", "\\|") if desc_tag else "No description"
