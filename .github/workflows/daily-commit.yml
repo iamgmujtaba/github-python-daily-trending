@@ -38,7 +38,7 @@ jobs:
           repos = soup.find_all("article", class_="Box-row")[:20]
 
           md_content = f"# Top 20 GitHub Trending Python Repos — {datetime.utcnow().strftime('%Y-%m-%d')}\n\n"
-          md_content += "| Rank | Repository | Stars Today | Description |\n"
+          md_content += "| Rank | Repository | Description | Stars Today |\n"
           md_content += "|------|------------|-------------|-------------|\n"
 
           for idx, repo in enumerate(repos, start=1):
@@ -48,7 +48,7 @@ jobs:
               desc = desc_tag.get_text(strip=True).replace("|", "\\|") if desc_tag else "No description"
               stars_tag = repo.find("span", class_="d-inline-block float-sm-right")
               stars_today = stars_tag.get_text(strip=True).replace("stars today", "").strip() if stars_tag else "0"
-              md_content += f"| {idx} | [{title}]({link}) | {stars_today} | {desc} |\n"
+              md_content += f"| {idx} | [{title}]({link}) | {desc} | {stars_today} |\n"
 
           with open("trending.md", "w", encoding="utf-8") as f:
               f.write(md_content)
