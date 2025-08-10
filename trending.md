@@ -1,67 +1,21 @@
-# Top 20 GitHub Trending Repos — 2025-08-10
+# Top 20 GitHub Trending Python Repos — 2025-08-10
 
-## umami-software /umami
-Stars Today: 139 stars today
-Description: Umami is a modern, privacy-focused alternative to Google Analytics.
-URL: https://github.com/umami-software /umami
-
-## libsdl-org /SDL
-Stars Today: 77 stars today
-Description: Simple Directmedia Layer
-URL: https://github.com/libsdl-org /SDL
-
-## menloresearch /jan
-Stars Today: 313 stars today
-Description: Jan is an open source alternative to ChatGPT that runs 100% offline on your computer
-URL: https://github.com/menloresearch /jan
-
-## nomic-ai /gpt4all
-Stars Today: 167 stars today
-Description: GPT4All: Run Local LLMs on Any Device. Open-source and available for commercial use.
-URL: https://github.com/nomic-ai /gpt4all
-
-## openai /codex
-Stars Today: 503 stars today
-Description: Lightweight coding agent that runs in your terminal
-URL: https://github.com/openai /codex
-
-## RSSNext /Folo
-Stars Today: 54 stars today
-Description: 🧡 Follow everything in one place
-URL: https://github.com/RSSNext /Folo
-
-## polarsource /polar
-Stars Today: 230 stars today
-Description: An open source engine for your digital products. Sell SaaS and digital products in minutes.
-URL: https://github.com/polarsource /polar
-
-## fastapi /full-stack-fastapi-template
-Stars Today: 69 stars today
-Description: Full stack, modern web application template. Using FastAPI, React, SQLModel, PostgreSQL, Docker, GitHub Actions, automatic HTTPS and more.
-URL: https://github.com/fastapi /full-stack-fastapi-template
-
-## topjohnwu /Magisk
-Stars Today: 27 stars today
-Description: The Magic Mask for Android
-URL: https://github.com/topjohnwu /Magisk
-
-## idosal /git-mcp
-Stars Today: 139 stars today
-Description: Put an end to code hallucinations! GitMCP is a free, open-source, remote MCP server for any GitHub project
-URL: https://github.com/idosal /git-mcp
-
-## binhnguyennus /awesome-scalability
-Stars Today: 150 stars today
-Description: The Patterns of Scalable, Reliable, and Performant Large-Scale Systems
-URL: https://github.com/binhnguyennus /awesome-scalability
-
-## openai /openai-node
-Stars Today: 94 stars today
-Description: Official JavaScript / TypeScript library for the OpenAI API
-URL: https://github.com/openai /openai-node
-
-## xiaoyaocz /dart_simple_live
-Stars Today: 112 stars today
-Description: 简简单单的看直播
-URL: https://github.com/xiaoyaocz /dart_simple_live
-
+| Rank | Repository | Stars Today | Description |
+|------|------------|-------------|-------------|
+| 1 | [polarsource /polar](https://github.com/polarsource /polar) | 230 | An open source engine for your digital products. Sell SaaS and digital products in minutes. |
+| 2 | [hesreallyhim /awesome-claude-code](https://github.com/hesreallyhim /awesome-claude-code) | 177 | A curated list of awesome commands, files, and workflows for Claude Code |
+| 3 | [lfnovo /open-notebook](https://github.com/lfnovo /open-notebook) | 377 | An Open Source implementation of Notebook LM with more flexibility and features |
+| 4 | [sinaptik-ai /pandas-ai](https://github.com/sinaptik-ai /pandas-ai) | 190 | Chat with your database or your datalake (SQL, CSV, parquet). PandasAI makes data analysis conversational using LLMs and RAG. |
+| 5 | [DevilXD /TwitchDropsMiner](https://github.com/DevilXD /TwitchDropsMiner) | 15 | An app that allows you to AFK mine timed Twitch drops, with automatic drop claiming and channel switching. |
+| 6 | [tadata-org /fastapi_mcp](https://github.com/tadata-org /fastapi_mcp) | 285 | Expose your FastAPI endpoints as Model Context Protocol (MCP) tools, with Auth! |
+| 7 | [ucbepic /docetl](https://github.com/ucbepic /docetl) | 26 | A system for agentic LLM-powered data processing and ETL |
+| 8 | [omkarcloud /botasaurus](https://github.com/omkarcloud /botasaurus) | 185 | The All in One Framework to Build Undefeatable Scrapers |
+| 9 | [yt-dlp /yt-dlp](https://github.com/yt-dlp /yt-dlp) | 118 | A feature-rich command-line audio/video downloader |
+| 10 | [openai /openai-python](https://github.com/openai /openai-python) | 229 | The official Python library for the OpenAI API |
+| 11 | [PacktPublishing /LLM-Engineers-Handbook](https://github.com/PacktPublishing /LLM-Engineers-Handbook) | 9 | The LLM's practical guide: From the fundamentals to deploying advanced LLM and RAG apps to AWS using LLMOps best practices |
+| 12 | [commaai /openpilot](https://github.com/commaai /openpilot) | 10 | openpilot is an operating system for robotics. Currently, it upgrades the driver assistance system on 300+ supported cars. |
+| 13 | [nottelabs /notte](https://github.com/nottelabs /notte) | 30 | 🔥 Reliable Browser AI agents (YC S25) |
+| 14 | [funstory-ai /BabelDOC](https://github.com/funstory-ai /BabelDOC) | 43 | Yet Another Document Translator |
+| 15 | [modelscope /DiffSynth-Studio](https://github.com/modelscope /DiffSynth-Studio) | 13 | Enjoy the magic of Diffusion models! |
+| 16 | [exo-explore /exo](https://github.com/exo-explore /exo) | 333 | Run your own AI cluster at home with everyday devices 📱💻 🖥️⌚ |
+| 17 | [unslothai /unsloth](https://github.com/unslothai /unsloth) | 66 | Fine-tuning & Reinforcement Learning for LLMs. 🦥 Train OpenAI gpt-oss, Qwen3, Llama 4, DeepSeek-R1, Gemma 3, TTS 2x faster with 70% less VRAM. |
