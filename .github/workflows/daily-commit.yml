@@ -23,7 +23,7 @@ jobs:
           python3 -m pip install --upgrade pip
           pip install requests beautifulsoup4
 
-      - name: Scrape GitHub Trending and update file
+      - name: Scrape GitHub Trending and update files
         run: |
           python3 - << 'PYCODE'
           import os
@@ -53,15 +53,15 @@ jobs:
               stars_today = stars_tag.get_text(strip=True).replace("stars today", "").strip() if stars_tag else "0"
               md_content += f"| {idx} | [{title}]({link}) | {desc} | {stars_today} |\n"
 
-          # Write main trending.md (latest)
+          # Write latest trending.md
           with open("trending.md", "w", encoding="utf-8") as f:
               f.write(md_content)
 
-          # Create daily archive folder if not exist
+          # Ensure daily-archives folder exists
           archive_dir = "daily-archives"
           os.makedirs(archive_dir, exist_ok=True)
 
-          # Write dated archive file
+          # Write daily archive markdown file
           archive_file = os.path.join(archive_dir, f"trending-{today}.md")
           with open(archive_file, "w", encoding="utf-8") as f:
               f.write(md_content)
@@ -71,6 +71,6 @@ jobs:
         run: |
           git config user.name "Ghulam Mujtaba"
           git config user.email "gmujtaba@ieee.org"
-          git add trending.md
+          git add trending.md daily-archives/
           git commit -m "feat: update trending repos — $(date '+%Y-%m-%d')" || echo "No changes to commit"
           git push
