@@ -71,6 +71,6 @@ jobs:
         run: |
           git config user.name "Ghulam Mujtaba"
           git config user.email "gmujtaba@ieee.org"
-          git add readme.md daily-archives/
+          git add README.md daily-archives/
           git commit -m "feat: update trending repos — $(date '+%Y-%m-%d')" || echo "No changes to commit"
           git push
