@@ -1,4 +1,4 @@
-# Top 20 GitHub Trending Python Repos — 2025-09-04 (Sorted by Total Stars)
+# Top Python Repo Trending in GitHub — 2025-09-04 (Sorted by Total Stars)
 
 | Rank | Repository | Description | Stars Today | Total Stars | Forks | Built by |
 |------|------------|-------------|-------------|-------------|-------|----------|
@@ -9,11 +9,11 @@
 | 5 | [QwenLM/Qwen3](https://github.com/QwenLM/Qwen3) | Qwen3 is the large language model series developed by Qwen team, Alibaba Cloud. | 26 | 24363 | 1686 | 5 contributors |
 | 6 | [NVIDIA/Megatron-LM](https://github.com/NVIDIA/Megatron-LM) | Ongoing research training transformer models at scale | 21 | 13449 | 3054 | 5 contributors |
 | 7 | [resemble-ai/chatterbox](https://github.com/resemble-ai/chatterbox) | SoTA open-source TTS | 283 | 11671 | 1450 | 5 contributors |
-| 8 | [oraios/serena](https://github.com/oraios/serena) | A powerful coding agent toolkit providing semantic retrieval and editing capabilities (MCP server & other integrations) | 229 | 11250 | 791 | 5 contributors |
+| 8 | [oraios/serena](https://github.com/oraios/serena) | A powerful coding agent toolkit providing semantic retrieval and editing capabilities (MCP server & other integrations) | 229 | 11250 | 792 | 5 contributors |
 | 9 | [livekit/agents](https://github.com/livekit/agents) | A powerful framework for building realtime voice AI agents 🤖🎙️📹 | 16 | 7398 | 1233 | 5 contributors |
-| 10 | [HKUDS/DeepCode](https://github.com/HKUDS/DeepCode) | "DeepCode: Open Agentic Coding (Paper2Code & Text2Web & Text2Backend)" | 160 | 5405 | 665 | 4 contributors |
+| 10 | [HKUDS/DeepCode](https://github.com/HKUDS/DeepCode) | "DeepCode: Open Agentic Coding (Paper2Code & Text2Web & Text2Backend)" | 160 | 5406 | 665 | 4 contributors |
 | 11 | [lfnovo/open-notebook](https://github.com/lfnovo/open-notebook) | An Open Source implementation of Notebook LM with more flexibility and features | 32 | 4044 | 416 | 3 contributors |
 | 12 | [JefferyHcool/BiliNote](https://github.com/JefferyHcool/BiliNote) | AI 视频笔记生成工具 让 AI 为你的视频做笔记 | 30 | 3482 | 392 | 5 contributors |
 | 13 | [denizsafak/abogen](https://github.com/denizsafak/abogen) | Generate audiobooks from EPUBs, PDFs and text with synchronized captions. | 36 | 3447 | 176 | 4 contributors |
-| 14 | [murtaza-nasir/maestro](https://github.com/murtaza-nasir/maestro) | MAESTRO is an AI-powered research application designed to streamline complex research tasks. | 68 | 1144 | 99 | 4 contributors |
+| 14 | [murtaza-nasir/maestro](https://github.com/murtaza-nasir/maestro) | MAESTRO is an AI-powered research application designed to streamline complex research tasks. | 68 | 1145 | 99 | 4 contributors |
 | 15 | [microsoft/rStar](https://github.com/microsoft/rStar) | No description | 48 | 961 | 87 | 3 contributors |
