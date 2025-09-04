@@ -1,0 +1,177 @@
+name: All Languages Trending Update
+
+on:
+  schedule:
+    - cron: '30 7 * * *'  # Runs daily at 07:30 UTC (30 minutes after Python workflow)
+  workflow_dispatch:
+
+permissions:
+  contents: write  # Required for private repo push
+
+jobs:
+  update-all-trending:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Install Python dependencies
+        run: |
+          python3 -m pip install --upgrade pip
+          pip install requests beautifulsoup4
+
+      - name: Scrape GitHub Trending (All Languages) and update files
+        run: |
+          python3 - << 'PYCODE'
+          import os
+          import requests
+          from bs4 import BeautifulSoup
+          from datetime import datetime
+
+          url = "https://github.com/trending/?since=daily"
+          headers = {"User-Agent": "Mozilla/5.0"}
+          r = requests.get(url, headers=headers)
+          soup = BeautifulSoup(r.text, "html.parser")
+
+          repos = soup.find_all("article", class_="Box-row")
+
+          repo_data = []
+
+          for repo in repos:
+              h2_link = repo.h2.find("a")
+              if h2_link:
+                  title = h2_link.get("href", "").strip("/")
+              else:
+                  title = repo.h2.get_text(strip=True).replace(" /", "/")
+              link = f"https://github.com/{title}"
+              desc_tag = repo.find("p", class_="col-9")
+              desc = desc_tag.get_text(strip=True).replace("|", "\\|") if desc_tag else "No description"
+              stars_tag = repo.find("span", class_="d-inline-block float-sm-right")
+              stars_today = stars_tag.get_text(strip=True).replace("stars today", "").strip() if stars_tag else "0"
+              
+              # Extract additional info from the muted div
+              muted_div = repo.find("div", class_="f6 color-fg-muted mt-2")
+              total_stars = "N/A"
+              forks = "N/A"
+              language = "Unknown"
+              built_by = "N/A"
+              if muted_div:
+                  # Look for programming language
+                  lang_span = muted_div.find("span", itemprop="programmingLanguage")
+                  if lang_span:
+                      language = lang_span.get_text(strip=True)
+                  
+                  # Look for stars link
+                  star_link = muted_div.find("a", href=lambda x: x and "/stargazers" in x)
+                  if star_link:
+                      total_stars = star_link.get_text(strip=True).replace(",", "")
+                  
+                  # Look for forks link
+                  fork_link = muted_div.find("a", href=lambda x: x and "/forks" in x)
+                  if fork_link:
+                      forks = fork_link.get_text(strip=True).replace(",", "")
+                  
+                  # Look for built by section
+                  spans = muted_div.find_all("span")
+                  for span in spans:
+                      if "Built by" in span.get_text():
+                          built_by_parent = span.find_parent()
+                          if built_by_parent:
+                              # Extract GitHub usernames from avatar links (exclude stargazers/forks)
+                              avatar_links = built_by_parent.find_all("a", class_="d-inline-block")
+                              usernames = []
+                              for avatar_link in avatar_links:
+                                  href = avatar_link.get("href", "")
+                                  # Only include user profile links (single slash followed by username)
+                                  if href.startswith("/") and "/" not in href[1:] and "stargazers" not in href and "forks" not in href:
+                                      username = href.strip("/")
+                                      usernames.append(f"[{username}](https://github.com{href})")
+                              built_by = ", ".join(usernames) if usernames else "N/A"
+                              break
+              
+              repo_data.append({
+                  'title': title,
+                  'link': link,
+                  'desc': desc,
+                  'language': language,
+                  'stars_today': stars_today,
+                  'total_stars': total_stars,
+                  'forks': forks,
+                  'built_by': built_by
+              })
+
+          # Sort by total stars (assuming numeric, handle 'k' for thousands)
+          def parse_stars(stars_str):
+              if stars_str == "N/A":
+                  return 0
+              if 'k' in stars_str.lower():
+                  return float(stars_str.lower().replace('k', '')) * 1000
+              try:
+                  return int(stars_str.replace(',', ''))
+              except ValueError:
+                  return 0
+
+          repo_data.sort(key=lambda x: parse_stars(x['total_stars']), reverse=True)
+          top_repos = repo_data[:25]  # Top 25 for all languages
+
+          today = datetime.utcnow().strftime('%Y-%m-%d')
+
+          # Create professional README content for all languages
+          md_content = f"# 🌟 GitHub Trending Repositories (All Languages) - {today}\n\n"
+          md_content += "> **Daily curated list of trending repositories across all programming languages, sorted by total stars**\n\n"
+          md_content += "## 🚀 Top 25 Repositories\n\n"
+
+          for idx, repo in enumerate(top_repos, start=1):
+              # Create repo stats in a compact format with language
+              stats = f"⭐ {repo['total_stars']} | 🍴 {repo['forks']} | 📈 +{repo['stars_today']} today | 💻 {repo['language']}"
+              
+              # Truncate description if too long
+              desc = repo['desc']
+              if len(desc) > 100:
+                  desc = desc[:97] + "..."
+              
+              md_content += f"### {idx}. [{repo['title']}]({repo['link']})\n\n"
+              md_content += f"**{desc}**\n\n"
+              md_content += f"{stats}\n\n"
+              md_content += f"**Contributors:** {repo['built_by']}\n\n"
+              md_content += "---\n\n"
+
+          # Add footer with metadata
+          md_content += "\n## 📈 About This Report\n\n"
+          md_content += f"- **Generated on:** {today}\n"
+          md_content += "- **Source:** GitHub Trending Repositories (All Languages)\n"
+          md_content += "- **Sorting:** By total repository stars (highest first)\n"
+          md_content += "- **Update frequency:** Daily at 07:30 UTC\n\n"
+          md_content += "## 🔗 Repository Structure\n\n"
+          md_content += "- `README.md` - Latest Python trending repositories\n"
+          md_content += "- `README-ALL-LANGUAGES.md` - Latest all-languages trending repositories\n"
+          md_content += "- `daily-archives/` - Historical daily reports\n\n"
+          md_content += "## 🐍 Python Only\n\n"
+          md_content += "For Python-specific trending repositories, see [README.md](./README.md)\n\n"
+          md_content += "---\n\n"
+          md_content += "*This report is automatically generated. For more trending repositories, visit [GitHub Trending](https://github.com/trending).*\n"
+
+          # Write all-languages trending file
+          with open("README-ALL-LANGUAGES.md", "w", encoding="utf-8") as f:
+              f.write(md_content)
+
+          # Ensure daily-archives folder exists
+          archive_dir = "daily-archives"
+          os.makedirs(archive_dir, exist_ok=True)
+
+          # Write daily archive markdown file for all languages
+          archive_file = os.path.join(archive_dir, f"trending-all-languages-{today}.md")
+          with open(archive_file, "w", encoding="utf-8") as f:
+              f.write(md_content)
+          PYCODE
+
+      - name: Commit and push updates
+        run: |
+          git config user.name "Ghulam Mujtaba"
+          git config user.email "gmujtaba@ieee.org"
+          git add README-ALL-LANGUAGES.md daily-archives/
+          git commit -m "feat: update all-languages trending repos — $(date '+%Y-%m-%d')" || echo "No changes to commit"
+          git push
