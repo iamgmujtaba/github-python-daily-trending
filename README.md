@@ -78,7 +78,7 @@
 
 **A powerful coding agent toolkit providing semantic retrieval and editing capabilities (MCP server...**
 
-⭐ 11252 | 🍴 792 | 📈 +229 today
+⭐ 11253 | 🍴 793 | 📈 +229 today
 
 **Contributors:** [MischaPanch](https://github.com/MischaPanch), [opcode81](https://github.com/opcode81), [mdbenito](https://github.com/mdbenito), [claude](https://github.com/claude), [dbernazal](https://github.com/dbernazal)
 
@@ -98,7 +98,7 @@
 
 **"DeepCode: Open Agentic Coding (Paper2Code & Text2Web & Text2Backend)"**
 
-⭐ 5408 | 🍴 666 | 📈 +160 today
+⭐ 5409 | 🍴 666 | 📈 +160 today
 
 **Contributors:** [Zongwei9888](https://github.com/Zongwei9888), [LarFii](https://github.com/LarFii), [LZH-YS1998](https://github.com/LZH-YS1998), [chaohuang-ai](https://github.com/chaohuang-ai)
 
