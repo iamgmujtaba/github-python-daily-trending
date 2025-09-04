@@ -77,8 +77,8 @@ jobs:
                               # Extract GitHub usernames from avatar links (exclude stargazers/forks)
                               avatar_links = built_by_parent.find_all("a", class_="d-inline-block")
                               usernames = []
-                              for link in avatar_links:
-                                  href = link.get("href", "")
+                              for avatar_link in avatar_links:
+                                  href = avatar_link.get("href", "")
                                   # Only include user profile links (single slash followed by username)
                                   if href.startswith("/") and "/" not in href[1:] and "stargazers" not in href and "forks" not in href:
                                       username = href.strip("/")
@@ -112,12 +112,37 @@ jobs:
 
           today = datetime.utcnow().strftime('%Y-%m-%d')
 
-          md_content = f"# Top Python Repo Trending in GitHub — {today} (Sorted by Total Stars)\n\n"
-          md_content += "| Rank | Repository | Description | Stars Today | Total Stars | Forks | Built by |\n"
-          md_content += "|------|------------|-------------|-------------|-------------|-------|----------|\n"
+          # Create professional README content
+          md_content = f"# 🐍 GitHub Trending Python Repositories - {today}\n\n"
+          md_content += "> **Daily curated list of trending Python repositories, sorted by total stars**\n\n"
+          md_content += "## 📊 Top 20 Repositories\n\n"
 
           for idx, repo in enumerate(top_repos, start=1):
-              md_content += f"| {idx} | [{repo['title']}]({repo['link']}) | {repo['desc']} | {repo['stars_today']} | {repo['total_stars']} | {repo['forks']} | {repo['built_by']} |\n"
+              # Create repo stats in a compact format
+              stats = f"⭐ {repo['total_stars']} | 🍴 {repo['forks']} | 📈 +{repo['stars_today']} today"
+              
+              # Truncate description if too long
+              desc = repo['desc']
+              if len(desc) > 100:
+                  desc = desc[:97] + "..."
+              
+              md_content += f"### {idx}. [{repo['title']}]({repo['link']})\n\n"
+              md_content += f"**{desc}**\n\n"
+              md_content += f"{stats}\n\n"
+              md_content += f"**Contributors:** {repo['built_by']}\n\n"
+              md_content += "---\n\n"
+
+          # Add footer with metadata
+          md_content += "\n## 📈 About This Report\n\n"
+          md_content += f"- **Generated on:** {today}\n"
+          md_content += "- **Source:** GitHub Trending Python Repositories\n"
+          md_content += "- **Sorting:** By total repository stars (highest first)\n"
+          md_content += "- **Update frequency:** Daily at 07:00 UTC\n\n"
+          md_content += "## 🔗 Repository Structure\n\n"
+          md_content += "- `README.md` - Latest trending repositories\n"
+          md_content += "- `daily-archives/` - Historical daily reports\n\n"
+          md_content += "---\n\n"
+          md_content += "*This report is automatically generated. For more trending repositories, visit [GitHub Trending](https://github.com/trending/python).*\n"
 
           # Write latest trending.md
           with open("README.md", "w", encoding="utf-8") as f:
