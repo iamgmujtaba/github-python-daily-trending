@@ -1,0 +1,89 @@
+#!/usr/bin/env python3
+
+import os
+import requests
+from bs4 import BeautifulSoup
+from datetime import datetime
+
+url = "https://github.com/trending/python?since=daily"
+headers = {"User-Agent": "Mozilla/5.0"}
+r = requests.get(url, headers=headers)
+soup = BeautifulSoup(r.text, "html.parser")
+
+repos = soup.find_all("article", class_="Box-row")
+
+repo_data = []
+
+for repo in repos:
+    title = repo.h2.get_text(strip=True).replace(" /", "/")
+    link = f"https://github.com/{title}"
+    desc_tag = repo.find("p", class_="col-9")
+    desc = desc_tag.get_text(strip=True).replace("|", "\\|") if desc_tag else "No description"
+    stars_tag = repo.find("span", class_="d-inline-block float-sm-right")
+    stars_today = stars_tag.get_text(strip=True).replace("stars today", "").strip() if stars_tag else "0"
+    
+    # Extract additional info from the muted div
+    muted_div = repo.find("div", class_="f6 color-fg-muted mt-2")
+    total_stars = "N/A"
+    forks = "N/A"
+    built_by = "N/A"
+    if muted_div:
+        # Look for stars link
+        star_link = muted_div.find("a", href=lambda x: x and "/stargazers" in x)
+        if star_link:
+            total_stars = star_link.get_text(strip=True).replace(",", "")
+        
+        # Look for forks link
+        fork_link = muted_div.find("a", href=lambda x: x and "/forks" in x)
+        if fork_link:
+            forks = fork_link.get_text(strip=True).replace(",", "")
+        
+        # Look for built by section
+        spans = muted_div.find_all("span")
+        for span in spans:
+            if "Built by" in span.get_text():
+                built_by_parent = span.find_parent()
+                if built_by_parent:
+                    # Count the number of avatar images
+                    avatars = built_by_parent.find_all("img", class_="avatar")
+                    built_by = f"{len(avatars)} contributors"
+                    break
+    
+    repo_data.append({
+        'title': title,
+        'link': link,
+        'desc': desc,
+        'stars_today': stars_today,
+        'total_stars': total_stars,
+        'forks': forks,
+        'built_by': built_by
+    })
+
+# Sort by total stars (assuming numeric, handle 'k' for thousands)
+def parse_stars(stars_str):
+    if stars_str == "N/A":
+        return 0
+    if 'k' in stars_str.lower():
+        return float(stars_str.lower().replace('k', '')) * 1000
+    try:
+        return int(stars_str.replace(',', ''))
+    except ValueError:
+        return 0
+
+repo_data.sort(key=lambda x: parse_stars(x['total_stars']), reverse=True)
+top_repos = repo_data[:20]
+
+today = datetime.utcnow().strftime('%Y-%m-%d')
+
+md_content = f"# Top 20 GitHub Trending Python Repos — {today} (Sorted by Total Stars)\n\n"
+md_content += "| Rank | Repository | Description | Stars Today | Total Stars | Forks | Built by |\n"
+md_content += "|------|------------|-------------|-------------|-------------|-------|----------|\n"
+
+for idx, repo in enumerate(top_repos, start=1):
+    md_content += f"| {idx} | [{repo['title']}]({repo['link']}) | {repo['desc']} | {repo['stars_today']} | {repo['total_stars']} | {repo['forks']} | {repo['built_by']} |\n"
+
+# Write latest trending.md
+with open("README.md", "w", encoding="utf-8") as f:
+    f.write(md_content)
+
+print("README.md updated successfully!")

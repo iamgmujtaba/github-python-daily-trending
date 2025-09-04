@@ -54,15 +54,26 @@ jobs:
               forks = "N/A"
               built_by = "N/A"
               if muted_div:
+                  # Look for stars link
+                  star_link = muted_div.find("a", href=lambda x: x and "/stargazers" in x)
+                  if star_link:
+                      total_stars = star_link.get_text(strip=True).replace(",", "")
+                  
+                  # Look for forks link
+                  fork_link = muted_div.find("a", href=lambda x: x and "/forks" in x)
+                  if fork_link:
+                      forks = fork_link.get_text(strip=True).replace(",", "")
+                  
+                  # Look for built by section
                   spans = muted_div.find_all("span")
                   for span in spans:
-                      text = span.get_text(strip=True)
-                      if "⭐" in text:
-                          total_stars = text.replace("⭐", "").strip()
-                      elif "🍴" in text:
-                          forks = text.replace("🍴", "").strip()
-                      elif "Built by" in text:
-                          built_by = text.replace("Built by", "").strip()
+                      if "Built by" in span.get_text():
+                          built_by_parent = span.find_parent()
+                          if built_by_parent:
+                              # Count the number of avatar images
+                              avatars = built_by_parent.find_all("img", class_="avatar")
+                              built_by = f"{len(avatars)} contributors"
+                              break
               
               repo_data.append({
                   'title': title,
