@@ -1,0 +1,76 @@
+name: Daily Trending Update
+
+on:
+  schedule:
+    - cron: '0 7 * * *'  # Runs daily at 07:00 UTC
+  workflow_dispatch:
+
+permissions:
+  contents: write  # Required for private repo push
+
+jobs:
+  update-trending:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Install Python dependencies
+        run: |
+          python3 -m pip install --upgrade pip
+          pip install requests beautifulsoup4
+
+      - name: Scrape GitHub Trending and update files
+        run: |
+          python3 - << 'PYCODE'
+          import os
+          import requests
+          from bs4 import BeautifulSoup
+          from datetime import datetime
+
+          url = "https://github.com/trending/python?since=daily"
+          headers = {"User-Agent": "Mozilla/5.0"}
+          r = requests.get(url, headers=headers)
+          soup = BeautifulSoup(r.text, "html.parser")
+
+          repos = soup.find_all("article", class_="Box-row")[:20]
+
+          today = datetime.utcnow().strftime('%Y-%m-%d')
+
+          md_content = f"# Top 20 GitHub Trending Python Repos — {today}\n\n"
+          md_content += "| Rank | Repository | Description | Stars Today |\n"
+          md_content += "|------|------------|-------------|-------------|\n"
+
+          for idx, repo in enumerate(repos, start=1):
+              title = repo.h2.get_text(strip=True).replace(" /", "/")
+              link = f"https://github.com/{title}"
+              desc_tag = repo.find("p", class_="col-9")
+              desc = desc_tag.get_text(strip=True).replace("|", "\\|") if desc_tag else "No description"
+              stars_tag = repo.find("span", class_="d-inline-block float-sm-right")
+              stars_today = stars_tag.get_text(strip=True).replace("stars today", "").strip() if stars_tag else "0"
+              md_content += f"| {idx} | [{title}]({link}) | {desc} | {stars_today} |\n"
+
+          # Write latest trending.md
+          with open("README.md", "w", encoding="utf-8") as f:
+              f.write(md_content)
+
+          # Ensure daily-archives folder exists
+          archive_dir = "daily-archives"
+          os.makedirs(archive_dir, exist_ok=True)
+
+          # Write daily archive markdown file
+          archive_file = os.path.join(archive_dir, f"trending-{today}.md")
+          with open(archive_file, "w", encoding="utf-8") as f:
+              f.write(md_content)
+          PYCODE
+
+      - name: Commit and push updates
+        run: |
+          git config user.name "Ghulam Mujtaba"
+          git config user.email "gmujtaba@ieee.org"
+          git add README.md daily-archives/
+          git commit -m "feat: update trending repos — $(date '+%Y-%m-%d')" || echo "No changes to commit"
+          git push
