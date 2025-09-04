@@ -57,11 +57,11 @@ jobs:
                   spans = muted_div.find_all("span")
                   for span in spans:
                       text = span.get_text(strip=True)
-                      if "stars" in text.lower() or "⭐" in text:
-                          total_stars = text.replace("stars", "").replace("⭐", "").strip()
-                      elif "forks" in text.lower() or "🍴" in text:
-                          forks = text.replace("forks", "").replace("🍴", "").strip()
-                      elif "built by" in text.lower():
+                      if "⭐" in text:
+                          total_stars = text.replace("⭐", "").strip()
+                      elif "🍴" in text:
+                          forks = text.replace("🍴", "").strip()
+                      elif "Built by" in text:
                           built_by = text.replace("Built by", "").strip()
               
               repo_data.append({
@@ -90,7 +90,7 @@ jobs:
 
           today = datetime.utcnow().strftime('%Y-%m-%d')
 
-          md_content = f"# Top 20 GitHub Trending Python Repos — {today} (Sorted by Total Stars)\n\n"
+          md_content = f"# Top Python Repo Trending in GitHub — {today} (Sorted by Total Stars)\n\n"
           md_content += "| Rank | Repository | Description | Stars Today | Total Stars | Forks | Built by |\n"
           md_content += "|------|------------|-------------|-------------|-------------|-------|----------|\n"
 
