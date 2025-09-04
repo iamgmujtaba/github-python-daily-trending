@@ -41,7 +41,11 @@ jobs:
           repo_data = []
 
           for repo in repos:
-              title = repo.h2.get_text(strip=True).replace(" /", "/")
+              h2_link = repo.h2.find("a")
+              if h2_link:
+                  title = h2_link.get("href", "").strip("/")
+              else:
+                  title = repo.h2.get_text(strip=True).replace(" /", "/")
               link = f"https://github.com/{title}"
               desc_tag = repo.find("p", class_="col-9")
               desc = desc_tag.get_text(strip=True).replace("|", "\\|") if desc_tag else "No description"
@@ -70,9 +74,16 @@ jobs:
                       if "Built by" in span.get_text():
                           built_by_parent = span.find_parent()
                           if built_by_parent:
-                              # Count the number of avatar images
-                              avatars = built_by_parent.find_all("img", class_="avatar")
-                              built_by = f"{len(avatars)} contributors"
+                              # Extract GitHub usernames from avatar links (exclude stargazers/forks)
+                              avatar_links = built_by_parent.find_all("a", class_="d-inline-block")
+                              usernames = []
+                              for link in avatar_links:
+                                  href = link.get("href", "")
+                                  # Only include user profile links (single slash followed by username)
+                                  if href.startswith("/") and "/" not in href[1:] and "stargazers" not in href and "forks" not in href:
+                                      username = href.strip("/")
+                                      usernames.append(f"[{username}](https://github.com{href})")
+                              built_by = ", ".join(usernames) if usernames else "N/A"
                               break
               
               repo_data.append({
